@@ -1,0 +1,55 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar-custom {
+    background-color: #343a40;
+}
+
+.sidebar {
+    background-color: #343a40;
+    min-height: 100vh;
+
+}
+.custom-color {
+        border-bottom: 1px solid #4e4e52;
+    color: #9496a1;
+    clear: both;
+    display: block;
+    font-family: 'Open Sans';
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 50px;
+    padding: 15px 0 0 0;
+    text-transform: uppercase;
+    width: 100%;
+}
+.sidebar a {
+    color: white;
+    text-decoration: none;
+}
+
+
+.sidebar a:hover {
+    background-color: #495057;
+}
+
+
+.content {
+    margin-left: 90spx;
+}
+
+.table thead th {
+    background-color: #343a40;
+    color: white;
+}
+
+#ProfileDropDown {
+    display: none;
+}
+
+#ProfileDropDown.show {
+    display: block;
+}
+
+
