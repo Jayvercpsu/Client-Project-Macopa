@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 // Retrieve household head data from POST request
 $household_id = $_POST['household_id'];
 $purok = $_POST['purok'];
-$hh_First_name = $_POST['hh_First_name'];
+$hh_First_name = $_POST['hh_First_name']; 
 $hh_Middle_name = $_POST['hh_Middle_name'];
 $hh_Last_name = $_POST['hh_Last_name'];
 $phone = $_POST['phone'];
@@ -57,76 +57,82 @@ if ($stmt->execute()) {
     $vulnerabilities = $_POST['vulnerability'];
 
     for ($i = 0; $i < count($First_names); $i++) {
-        // Check if household member already exists
-        $check_member_sql = "SELECT member_id FROM household_members WHERE First_name = ? AND Middle_name = ? AND Last_name = ? AND dob = ?";
+        // Check if member already exists to prevent duplicates
+        $check_member_sql = "SELECT * FROM household_members WHERE household_id = ? 
+                             AND First_name = ? AND Middle_name = ? AND Last_name = ?";
         $check_member_stmt = $conn->prepare($check_member_sql);
-        $check_member_stmt->bind_param("ssss", $First_names[$i], $Middle_names[$i], $Last_names[$i], $dobs[$i]);
+        $check_member_stmt->bind_param("ssss", $household_id, $First_names[$i], $Middle_names[$i], $Last_names[$i]);
         $check_member_stmt->execute();
         $check_member_stmt->store_result();
 
         if ($check_member_stmt->num_rows == 0) {
-            // Insert new household member
+            // Insert only if member doesn't already exist
             $sql_member = "INSERT INTO household_members 
-                        (household_id, purok, First_name, Middle_name, Last_name, gender, dob, pob, relationship, marital_status, nationality, occupation, vulnerability) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                           (household_id, purok, First_name, Middle_name, Last_name, gender, dob, pob, relationship, marital_status, nationality, occupation, vulnerability) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt_member = $conn->prepare($sql_member);
             $stmt_member->bind_param("sssssssssssss", 
                 $household_id, $purok, $First_names[$i], $Middle_names[$i], $Last_names[$i], 
                 $genders[$i], $dobs[$i], $pobs[$i], $relationships[$i], $marital_statuses[$i], 
                 $nationalities[$i], $occupations[$i], $vulnerabilities[$i]);
+            $stmt_member->execute();
 
-            if ($stmt_member->execute()) {
-                // Retrieve the member_id of the newly inserted household member
-                $member_id = $stmt_member->insert_id;
+            // Retrieve the member_id of the newly inserted household member
+            $member_id = $stmt_member->insert_id;
+            $stmt_member->close();
 
-                // Family members from modal
-                if (isset($_POST['family_first_name']) && is_array($_POST['family_first_name'])) {
-                    $family_first_names = $_POST['family_first_name'];
-                    $family_middle_names = $_POST['family_middle_name'];
-                    $family_last_names = $_POST['family_last_name'];
-                    $family_genders = $_POST['family_gender'];
-                    $family_dobs = $_POST['family_dob'];
-                    $family_pobs = $_POST['family_pob'];
-                    $family_relationships = $_POST['family_relationship'];
-                    $family_marital_statuses = $_POST['family_marital_status'];
-                    $family_nationalities = $_POST['family_nationality'];
-                    $family_occupations = $_POST['family_occupation'];
-                    $family_vulnerabilities = $_POST['family_vulnerability'];
+            // Family members from modal (if available)
+            if (isset($_POST['family_first_name']) && is_array($_POST['family_first_name'])) {
+                $family_first_names = $_POST['family_first_name'];
+                $family_middle_names = $_POST['family_middle_name'];
+                $family_last_names = $_POST['family_last_name'];
+                $family_genders = $_POST['family_gender'];
+                $family_dobs = $_POST['family_dob'];
+                $family_pobs = $_POST['family_pob'];
+                $family_relationships = $_POST['family_relationship'];
+                $family_marital_statuses = $_POST['family_marital_status'];
+                $family_nationalities = $_POST['family_nationality'];
+                $family_occupations = $_POST['family_occupation'];
+                $family_vulnerabilities = $_POST['family_vulnerability'];
 
-                    // Loop through family members
-                    for ($j = 0; $j < count($family_first_names); $j++) {
-                        // Insert each family member and associate with the household member (partner)
+                for ($j = 0; $j < count($family_first_names); $j++) {
+                    // Check if family member already exists to prevent duplicates
+                    $check_family_sql = "SELECT * FROM family_members WHERE household_id = ? 
+                                         AND first_name = ? AND middle_name = ? AND last_name = ?";
+                    $check_family_stmt = $conn->prepare($check_family_sql);
+                    $check_family_stmt->bind_param("ssss", $household_id, $family_first_names[$j], $family_middle_names[$j], $family_last_names[$j]);
+                    $check_family_stmt->execute();
+                    $check_family_stmt->store_result();
+
+                    if ($check_family_stmt->num_rows == 0) {
+                        // Insert only if family member doesn't already exist
                         $sql_family = "INSERT INTO family_members 
-                                    (household_id, member_id, first_name, middle_name, last_name, gender, dob, pob, relationship, marital_status, nationality, occupation, vulnerability) 
-                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                       (household_id, member_id, first_name, middle_name, last_name, gender, dob, pob, relationship, marital_status, nationality, occupation, vulnerability) 
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         $stmt_family = $conn->prepare($sql_family);
                         $stmt_family->bind_param("sssssssssssss", 
                             $household_id, $member_id, $family_first_names[$j], $family_middle_names[$j], 
                             $family_last_names[$j], $family_genders[$j], $family_dobs[$j], 
                             $family_pobs[$j], $family_relationships[$j], $family_marital_statuses[$j], 
                             $family_nationalities[$j], $family_occupations[$j], $family_vulnerabilities[$j]);
-
                         if ($stmt_family->execute()) {
-                            // Family member successfully added
+                            echo "<script>alert('Family member added successfully!');</script>";
                         } else {
-                            // Handle error
-                            echo "<script>alert('Error occurred while adding family member.');</script>";
+                            echo "<script>alert('Error adding family member: " . $stmt_family->error . "');</script>";
                         }
                         $stmt_family->close();
                     }
+                    $check_family_stmt->close();
                 }
-            } else {
-                echo "<script>alert('Error occurred while adding household member.');</script>";
             }
-            $stmt_member->close();
         }
         $check_member_stmt->close();
     }
 
     // Insert into residents table
     $sql_resident = "INSERT INTO residents 
-                    (household_id, purok, First_name, Middle_name, Last_name, phone) 
-                    VALUES (?, ?, ?, ?, ?, ?)";
+                     (household_id, purok, First_name, Middle_name, Last_name, phone) 
+                     VALUES (?, ?, ?, ?, ?, ?)";
     $stmt_resident = $conn->prepare($sql_resident);
     $stmt_resident->bind_param("ssssss", $household_id, $purok, $hh_First_name, $hh_Middle_name, $hh_Last_name, $phone);
     $stmt_resident->execute();
