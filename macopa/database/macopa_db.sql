@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jan 14, 2025 at 02:14 PM
+-- Generation Time: Jan 15, 2025 at 03:33 AM
 -- Server version: 8.3.0
 -- PHP Version: 8.2.18
 
@@ -85,15 +85,15 @@ CREATE TABLE IF NOT EXISTS `family_members` (
   PRIMARY KEY (`id`),
   KEY `household_id` (`household_id`),
   KEY `fk_member` (`member_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=86 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=122 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `family_members`
 --
 
 INSERT INTO `family_members` (`id`, `household_id`, `first_name`, `middle_name`, `last_name`, `gender`, `dob`, `pob`, `relationship`, `marital_status`, `nationality`, `occupation`, `vulnerability`, `member_id`) VALUES
-(84, '123456', 'joshua family', 'op', 'algadipe', 'Male', '2025-01-14', 'samplea', 'samplea', 'Single', 'samplea', 'samplea', '4ps', 580),
-(85, '123456', 'joshua family', 'op', 'algadipe', 'Male', '2025-01-14', 'samplea', 'samplea', 'Single', 'samplea', 'samplea', '4ps', 581);
+(120, '123456', 'f', 'f', 'f', 'Male', '2025-01-30', 'f', 'f', 'Single', 'f', 'f', '4ps', 615),
+(121, '123456', 'f1233', 'f', 'f', 'Male', '2025-01-30', 'f', 'f', 'Single', 'f', 'f', '4ps', 615);
 
 -- --------------------------------------------------------
 
@@ -112,14 +112,14 @@ CREATE TABLE IF NOT EXISTS `households` (
   `phone` varchar(100) NOT NULL,
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=234 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=252 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `households`
 --
 
 INSERT INTO `households` (`id`, `household_id`, `purok`, `hh_First_name`, `hh_Middle_name`, `hh_Last_name`, `phone`, `date`) VALUES
-(233, 123456, 'Purok 5', 'jayver', 'p', 'algadipe', '09702005316', '2025-01-14 21:54:50');
+(251, 123456, 'Purok 1', 'l', 'l', 'l', '09702005316', '2025-01-15 11:18:05');
 
 -- --------------------------------------------------------
 
@@ -145,15 +145,15 @@ CREATE TABLE IF NOT EXISTS `household_members` (
   `vulnerability` varchar(100) NOT NULL,
   `Date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`member_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=582 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=617 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `household_members`
 --
 
 INSERT INTO `household_members` (`member_id`, `household_id`, `purok`, `First_name`, `Middle_name`, `Last_name`, `gender`, `dob`, `pob`, `relationship`, `marital_status`, `nationality`, `occupation`, `vulnerability`, `Date`) VALUES
-(580, 123456, 'Purok 5', 'joel', 'p', 'algadipe', 'Male', '2025-01-14', 'sample', 'sample', 'Single', 'filipino', 'sample', '4ps', '2025-01-14 21:54:50'),
-(581, 123456, 'Purok 5', 'JOSHUA', 'P', 'ALGADIPE', 'Male', '2025-01-14', 'ad', 'sample', 'Single', 'filipino', '4ps', '4ps', '2025-01-14 21:54:50');
+(615, 123456, 'Purok 1', 'a', 'a', 'a', 'Male', '2025-02-05', 'a', 'a', 'Single', 'a', 'a', '4ps', '2025-01-15 11:18:05'),
+(616, 123456, 'Purok 1', 'b', 'b', 'b', 'Male', '2025-02-04', 'b', 'b', 'Single', 'b', 'b', '4ps', '2025-01-15 11:18:05');
 
 -- --------------------------------------------------------
 
@@ -223,10 +223,8 @@ CREATE TABLE IF NOT EXISTS `residents` (
 --
 
 INSERT INTO `residents` (`household_id`, `First_name`, `Middle_name`, `Last_name`, `purok`, `vulnerability`, `phone`) VALUES
-(2147483647, 'MACKIE', 'LARONG', 'NAVALLO', 'Purok 5', '', '09975705643'),
-(21721, 'Renie', 'Larong', 'Navallo', 'Purok 5', '', '09975705643'),
-(98765, 'RENIE', 'LARONG', 'NAVALLO', 'Purok 5', '', '09975705643'),
-(123456, 'jayver', 'p', 'algadipe', 'Purok 5', '', '09702005316');
+(2147483647, 'l', 'l', 'l', 'Purok 4', '', '09702005316'),
+(123456, 'l', 'l', 'l', 'Purok 5', '', '09702005316');
 
 -- --------------------------------------------------------
 
